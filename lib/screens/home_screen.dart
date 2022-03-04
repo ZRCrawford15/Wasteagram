@@ -10,21 +10,49 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<HomeScreen> {
-  final num? total_items = 0;
   File? image;
   final picker = ImagePicker();
+  num totalCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getTotalItemCount();
+
+
+  }
+
+
+  // trying to initalize item count for header
+  getTotalItemCount() {
+    StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData &&
+                snapshot.data!.docs != null &&
+                snapshot.data!.docs.length > 0) {
+                  ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      var post = snapshot.data!.docs[index];
+                          totalCount += (post['item_count']);
+                          return Card();
+                    });
+                }
+                return Card();
+      });
+  }
 
 /*
 * Pick an image from the gallery, upload it to Firebase Storage and return 
 * the URL of the image in Firebase Storage.
 */
 
-
 @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wasteagram')
+        title: Text('Wasteagram ' + totalCount.toString())
         ,
       ),
       body: StreamBuilder(
@@ -40,23 +68,23 @@ class _CameraScreenState extends State<HomeScreen> {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         var post = snapshot.data!.docs[index];
+                        totalCount += (post['item_count']);  // Not properly adding counts. Don't know why
                         return ListTile(
-                            leading: Text(post['weight'].toString()),
                             title: Text(post['title']),
-                            //trailing: Image.network(post['url']),
                             onTap:() async {
-                              Navigator.pushNamed(context, 'details', arguments: {'image': post['url']});
+                              Navigator.pushNamed(context, 'details', arguments: {'image': post['url'], 'title': post['title'], 'item_count': post['item_count']});
                             } ,
-
                         );
                       },
                     ),
                   ),
                   ElevatedButton(
-                    child: Text('New Post!'),
+                    child: const Text('New Post!'),
                     onPressed: () async {
                       // getImage();
-                      Navigator.pushNamed(context, 'NewEntry', arguments: {'image':                       await getImage()});
+                      Navigator.pushNamed(
+                        context, 'NewEntry', 
+                        arguments: {'image': await getImage()});
                       // navigate to new new entry and pass the picture taken
                     },
                   ),
@@ -65,12 +93,14 @@ class _CameraScreenState extends State<HomeScreen> {
             } else {
               return Column(
                 children: [
-                  Center(child: CircularProgressIndicator()),
+                  const Center(child: CircularProgressIndicator()),
                   ElevatedButton(
-                    child: Text('New Post!'),
+                    child: const Text('New Post!'),
                     onPressed: () async {
                       // getImage();
-                      Navigator.pushNamed(context, 'NewEntry', arguments: {'image':                       await getImage()});
+                      Navigator.pushNamed(
+                        context, 'NewEntry', 
+                        arguments: {'image': await getImage()});
                       // navigate to new new entry and pass the picture taken
                     },
                   ),
@@ -82,15 +112,15 @@ class _CameraScreenState extends State<HomeScreen> {
   }
 
     Future getImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    image = File(pickedFile!.path);
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      image = File(pickedFile!.path);
 
-    var fileName = DateTime.now().toString() + '.jpg';
-    Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-    UploadTask uploadTask = storageReference.putFile(image!);
-    await uploadTask;
-    final url = await storageReference.getDownloadURL();
-    return url;
+      var fileName = DateTime.now().toString() + '.jpg';
+      Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
+      UploadTask uploadTask = storageReference.putFile(image!);
+      await uploadTask;
+      final url = await storageReference.getDownloadURL();
+      return url;
   }
 
 

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class NewEntry extends StatefulWidget {
   const NewEntry({ Key? key }) : super(key: key);
@@ -23,6 +24,8 @@ class _NewEntryState extends State<NewEntry> {
   String? image;
   // final String image_here = 'placeholder image spot';
   final picker = ImagePicker();
+  num? items;
+  DateTime? date;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +39,42 @@ class _NewEntryState extends State<NewEntry> {
           child: Column(
             children: [
               Image.network(image!),
-              // Text(image_here),
-              Text('Form spot'),
-              ElevatedButton(onPressed: () {
-                uploadData(image);
-                Navigator.pushNamed(context, '/');
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Number of items', 
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          // TODO use DTO 
+                          // print(value);
+                          items = int.parse(value);
+                       },
+                      )],
+                    )
+                  ],
+                ),
+              ),
+              ElevatedButton(onPressed: () async {
+                uploadData(image, items);
+
+                // trying to get the total_items collection avlue for updating
+                // var collection = FirebaseFirestore.instance.collection('total_items');
+                // var docSnapshot = await collection.doc('item_count').get();
+                // if (docSnapshot.exists) {
+                //   Map<String, dynamic> data = docSnapshot.data()!;
+                //   var itemCount = data['item_count'];
+                //   print(itemCount);
+                // } else {
+                //   print('No snapshot exists');
+                // }
+                Navigator.pop(context);
+                
               }, child: Text('Upload!'))
             ],
           ),
@@ -49,14 +83,18 @@ class _NewEntryState extends State<NewEntry> {
     );
   }
 
-  void uploadData(image) async {
+  void uploadData(image, itemCount) async {
+    DateTime date = DateTime.now();
     final url = image;
-    final date = DateTime.now().millisecondsSinceEpoch % 1000;
-    final title = 'Title ' + date.toString();
+    final title = DateFormat.yMMMd().format(date);
+    final numItems = itemCount;
     FirebaseFirestore.instance
         .collection('posts')
-        .add({'weight': date, 'title': title, 'url': url});
+        .add({'title': title, 'url': url, 'item_count': numItems});   
   }
+
+
+
 }
 
 

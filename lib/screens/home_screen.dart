@@ -21,12 +21,10 @@ class _CameraScreenState extends State<HomeScreen> {
     getTotalItemCount();
   }
 
-
 /*
 * Pick an image from the gallery, upload it to Firebase Storage and return 
 * the URL of the image in Firebase Storage.
 */
-
 @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,12 +47,12 @@ class _CameraScreenState extends State<HomeScreen> {
                         var post = snapshot.data!.docs[index];
                         totalCount += (post['item_count']);  // Not properly adding counts. Don't know why
                         return ListTile(
-                            title: Text(post['title']),
+                            title: Text(post['date']),
                             onTap:() async {
                               Navigator.pushNamed(
                                 context, 'details', 
                                 arguments: {'image': post['url'], 
-                                'title': post['title'], 
+                                'title': post['date'], 
                                 'item_count': post['item_count'],
                                 'lattitude': post['lattitude'],
                                 'longitude': post['longitude']

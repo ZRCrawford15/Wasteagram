@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import '../models/post.dart';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -22,18 +20,13 @@ class NewEntry extends StatefulWidget {
 class _NewEntryState extends State<NewEntry> {
 
   final formKey = GlobalKey<FormState>();
-  final Post post = Post(date: DateTime.now(), location: 'location', item_count: 0);
-  String? image;
-  // final String image_here = 'placeholder image spot';
   final picker = ImagePicker();
-  num? items;
-  DateTime? date;
-  String? lattitude;
-  String? longitude;
-  
 
   LocationData? locationData;
   var locationService = Location();
+
+  Post post = Post(dateTime: DateTime.now(), itemCount: 0, 
+    image: '', lattitude: '', longitude: '');
 
   @override
   void initState() {
@@ -45,7 +38,7 @@ class _NewEntryState extends State<NewEntry> {
   @override
   Widget build(BuildContext context) {
     final Map? receivedValue = ModalRoute.of(context)?.settings.arguments as Map?;
-    image = receivedValue!['image'];
+    post.setImage = receivedValue!['image'];
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -53,7 +46,7 @@ class _NewEntryState extends State<NewEntry> {
         child: Center(
           child: Column(
             children: [
-              Image.network(image!),
+              Expanded(child: Image.network(post.getImage)),
               Form(
                 key: formKey,
                 child: Column(
@@ -66,9 +59,7 @@ class _NewEntryState extends State<NewEntry> {
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
-                          // TODO use DTO 
-                          // print(value);
-                          items = int.parse(value);
+                          post.itemCount = int.parse(value);
                        },
                       )],
                     )
@@ -76,22 +67,9 @@ class _NewEntryState extends State<NewEntry> {
                 ),
               ),
               ElevatedButton(onPressed: () async {
-                lattitude = locationData!.latitude.toString();  
-                longitude = locationData!.longitude.toString();
-                uploadData(image, items, lattitude, longitude);
-
-
-
-                // trying to get the total_items collection avlue for updating
-                // var collection = FirebaseFirestore.instance.collection('total_items');
-                // var docSnapshot = await collection.doc('item_count').get();
-                // if (docSnapshot.exists) {
-                //   Map<String, dynamic> data = docSnapshot.data()!;
-                //   var itemCount = data['item_count'];
-                //   print(itemCount);
-                // } else {
-                //   print('No snapshot exists');
-                // }
+                post.lattitude = locationData!.latitude.toString();  
+                post.longitude = locationData!.longitude.toString();
+                uploadData(post);
                 Navigator.pop(context);
                 
               }, child: Text('Upload!'))
@@ -102,19 +80,17 @@ class _NewEntryState extends State<NewEntry> {
     );
   }
 
-  // pass DTO object instead
-  void uploadData(image, itemCount, lat, long) async {
+  void uploadData(Post post) async {
     DateTime date = DateTime.now();
-    final url = image;
     final title = DateFormat.yMMMd().format(date);
-    final numItems = itemCount;
+
     FirebaseFirestore.instance
         .collection('posts')
-        .add({'title': title, 
-              'url': url, 
-              'item_count': numItems,
-              'lattitude': lat,
-              'longitude': long
+        .add({'date': title, 
+              'url': post.getImage, 
+              'item_count': post.getNumItems,
+              'lattitude': post.getLattidue,
+              'longitude': post.getLattidue
               });   
   }
 

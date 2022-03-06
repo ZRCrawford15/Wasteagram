@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
+
 class HomeScreen extends StatefulWidget {
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -18,30 +19,8 @@ class _CameraScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getTotalItemCount();
-
-
   }
 
-
-  // trying to initalize item count for header
-  getTotalItemCount() {
-    StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasData &&
-                snapshot.data!.docs != null &&
-                snapshot.data!.docs.length > 0) {
-                  ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      var post = snapshot.data!.docs[index];
-                          totalCount += (post['item_count']);
-                          return Card();
-                    });
-                }
-                return Card();
-      });
-  }
 
 /*
 * Pick an image from the gallery, upload it to Firebase Storage and return 
@@ -72,7 +51,14 @@ class _CameraScreenState extends State<HomeScreen> {
                         return ListTile(
                             title: Text(post['title']),
                             onTap:() async {
-                              Navigator.pushNamed(context, 'details', arguments: {'image': post['url'], 'title': post['title'], 'item_count': post['item_count']});
+                              Navigator.pushNamed(
+                                context, 'details', 
+                                arguments: {'image': post['url'], 
+                                'title': post['title'], 
+                                'item_count': post['item_count'],
+                                'lattitude': post['lattitude'],
+                                'longitude': post['longitude']
+                                });
                             } ,
                         );
                       },
@@ -124,5 +110,25 @@ class _CameraScreenState extends State<HomeScreen> {
   }
 
 
+
+  // trying to initalize item count for header
+  getTotalItemCount() {
+    StreamBuilder(
+      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData &&
+                snapshot.data!.docs != null &&
+                snapshot.data!.docs.length > 0) {
+                  ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      var post = snapshot.data!.docs[index];
+                          totalCount += (post['item_count']);
+                          return Card();
+                    });
+                }
+                return Card();
+      });
+  }
 
 }

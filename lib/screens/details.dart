@@ -18,7 +18,7 @@ class Details extends StatelessWidget {
             Text(receivedValue!['title']),
             Image.network(receivedValue['image']), // Image
             Text(receivedValue['item_count'].toString()),
-            Text('Coordinates')
+            Text('${receivedValue['lattitude']}, ${receivedValue['longitude']}')
           ],
         ),
       ),

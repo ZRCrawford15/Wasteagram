@@ -15,10 +15,10 @@ class Details extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text('Date Goes here'),
-            Image.network(receivedValue!['image']), // Image
-            Text('Item count'),
-            Text('Coordinates')
+            Text(receivedValue!['title']),
+            Image.network(receivedValue['image']), // Image
+            Text(receivedValue['item_count'].toString()),
+            Text('${receivedValue['lattitude']}, ${receivedValue['longitude']}')
           ],
         ),
       ),

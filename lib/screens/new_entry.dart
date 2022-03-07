@@ -1,8 +1,5 @@
 // ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,7 +21,6 @@ class _NewEntryState extends State<NewEntry> {
 
   final formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
-  File? image;
 
   LocationData? locationData;
   var locationService = Location();
@@ -50,7 +46,7 @@ class _NewEntryState extends State<NewEntry> {
         child: Center(
           child: Column(
             children: [
-              Expanded(child: Image.file(File(post.getImage))),
+              Expanded(child: Image.network(post.getImage)),
               Form(
                 key: formKey,
                 child: Column(
@@ -85,7 +81,8 @@ class _NewEntryState extends State<NewEntry> {
   }
 
   void uploadData(Post post) async {
-    String title = DateFormat('yyyy-MM-DD : kk:mm').format(DateTime.now());
+    DateTime date = DateTime.now();
+    final title = DateFormat.yMMMd().format(date);
 
     FirebaseFirestore.instance
         .collection('posts')
@@ -126,20 +123,7 @@ void retrieveLocation() async {
   }
 
 
-    Future getImage(imageUrl) async {
-      // final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      image = imageUrl;
-
-      var fileName = DateTime.now().toString() + '.jpg';
-      Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-      UploadTask uploadTask = storageReference.putFile(image!);
-      await uploadTask;
-      final url = await storageReference.getDownloadURL();
-      return url;
-  }
-
 
 }
-
 
 

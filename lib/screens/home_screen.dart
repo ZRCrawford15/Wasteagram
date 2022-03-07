@@ -25,20 +25,19 @@ class _CameraScreenState extends State<HomeScreen> {
 * Pick an image from the gallery, upload it to Firebase Storage and return 
 * the URL of the image in Firebase Storage.
 */
+
 @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Wasteagram ' + totalCount.toString())
-        ,
-      ),
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasData &&
-                snapshot.data!.docs != null &&
-                snapshot.data!.docs.length > 0) {
-              return Column(
+Widget build(BuildContext context) {
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+    builder: (context,  AsyncSnapshot<QuerySnapshot> snapshot) {
+      if (snapshot.hasData &&
+      snapshot.data!.docs != null &&
+      snapshot.data!.docs.length > 0) {
+        return Scaffold(
+        appBar: AppBar(
+        title: Text('Wasteagram - $totalCount')),
+        body: Column(
                 children: [
                   Expanded(
                     child: ListView.builder(
@@ -65,23 +64,26 @@ class _CameraScreenState extends State<HomeScreen> {
                   ElevatedButton(
                     child: const Text('New Post!'),
                     onPressed: () async {
-                      // getImage();
+                      String url = await getImage();
                       Navigator.pushNamed(
                         context, 'NewEntry', 
-                        arguments: {'image': await getImage()});
+                        arguments: {'image': url});
                       // navigate to new new entry and pass the picture taken
                     },
                   ),
                 ],
-              );
-            } else {
-              return Column(
+              )
+            );
+      } else {
+      return Scaffold(
+        appBar: AppBar(
+        title: Text('Wasteagram - 0')),
+        body: Column(
                 children: [
                   const Center(child: CircularProgressIndicator()),
                   ElevatedButton(
                     child: const Text('New Post!'),
                     onPressed: () async {
-                      // getImage();
                       Navigator.pushNamed(
                         context, 'NewEntry', 
                         arguments: {'image': await getImage()});
@@ -89,22 +91,102 @@ class _CameraScreenState extends State<HomeScreen> {
                     },
                   ),
                 ],
-              );
-            }
-          }),
-    );
-  }
+              )
+            );
+      }
+    }
+  );
+
+
+
+
+}
+// @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: StreamBuilder(
+//           stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+//           builder: (BuildContext _context, AsyncSnapshot<QuerySnapshot> snapshot{
+            
+
+//             // return Text('Wasteagram ' + totalCount.toString());
+//           }
+//         ),
+//         ),
+//       ),
+//       body: StreamBuilder(
+//           stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+//           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//             if (snapshot.hasData &&
+//                 snapshot.data!.docs != null &&
+//                 snapshot.data!.docs.length > 0) {
+//               return Column(
+//                 children: [
+//                   Expanded(
+//                     child: ListView.builder(
+//                       itemCount: snapshot.data!.docs.length,
+//                       itemBuilder: (context, index) {
+//                         var post = snapshot.data!.docs[index];
+//                         totalCount += (post['item_count']);  // Not properly adding counts. Don't know why
+//                         return ListTile(
+//                             title: Text(post['date']),
+//                             onTap:() async {
+//                               Navigator.pushNamed(
+//                                 context, 'details', 
+//                                 arguments: {'image': post['url'], 
+//                                 'title': post['date'], 
+//                                 'item_count': post['item_count'],
+//                                 'lattitude': post['lattitude'],
+//                                 'longitude': post['longitude']
+//                                 });
+//                             } ,
+//                         );
+//                       },
+//                     ),
+//                   ),
+//                   ElevatedButton(
+//                     child: const Text('New Post!'),
+//                     onPressed: () async {
+//                       String url = await getImage();
+//                       Navigator.pushNamed(
+//                         context, 'NewEntry', 
+//                         arguments: {'image': url});
+//                       // navigate to new new entry and pass the picture taken
+//                     },
+//                   ),
+//                 ],
+//               );
+//             } else {
+//               return Column(
+//                 children: [
+//                   const Center(child: CircularProgressIndicator()),
+//                   ElevatedButton(
+//                     child: const Text('New Post!'),
+//                     onPressed: () async {
+//                       Navigator.pushNamed(
+//                         context, 'NewEntry', 
+//                         arguments: {'image': await getImage()});
+//                       // navigate to new new entry and pass the picture taken
+//                     },
+//                   ),
+//                 ],
+//               );
+//             }
+//           }),
+//     );
+//   }
 
     Future getImage() async {
       final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      image = File(pickedFile!.path);
+      // image = File(pickedFile!.path);
 
-      var fileName = DateTime.now().toString() + '.jpg';
-      Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-      UploadTask uploadTask = storageReference.putFile(image!);
-      await uploadTask;
-      final url = await storageReference.getDownloadURL();
-      return url;
+      // var fileName = DateTime.now().toString() + '.jpg';
+      // Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
+      // UploadTask uploadTask = storageReference.putFile(image!);
+      // await uploadTask;
+      // final url = await storageReference.getDownloadURL();
+      return pickedFile!.path;
   }
 
 
@@ -128,5 +210,4 @@ class _CameraScreenState extends State<HomeScreen> {
                 return Card();
       });
   }
-
 }

@@ -73,6 +73,7 @@ class _NewEntryState extends State<NewEntry> {
               ElevatedButton(onPressed: () async {
                 post.lattitude = locationData!.latitude.toString();  
                 post.longitude = locationData!.longitude.toString();
+                post.image = await getImage(post.getImage);
                 uploadData(post);
                 Navigator.pop(context);
                 
@@ -126,12 +127,12 @@ void retrieveLocation() async {
   }
 
 
-    Future getImage(imageUrl) async {
-      // final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      image = imageUrl;
+    Future getImage(imageFile) async {
+      final pickedFile = imageFile;
+      image = File(pickedFile!);
 
       var fileName = DateTime.now().toString() + '.jpg';
-      Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
+      Reference storageReference = FirebaseStorage.instance.ref().child(pickedFile);
       UploadTask uploadTask = storageReference.putFile(image!);
       await uploadTask;
       final url = await storageReference.getDownloadURL();

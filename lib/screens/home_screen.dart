@@ -74,7 +74,7 @@ Widget build(BuildContext context) {
                 ],
               )
             );
-      } else {
+      } else {  // empty list
       return Scaffold(
         appBar: AppBar(
         title: Text('Wasteagram - 0')),

@@ -47,6 +47,7 @@ Widget build(BuildContext context) {
                         totalCount += (post['item_count']);  // Not properly adding counts. Don't know why
                         return ListTile(
                             title: Text(post['date']),
+                            trailing: Text(post['item_count'].toString()),
                             onTap:() async {
                               Navigator.pushNamed(
                                 context, 'details', 

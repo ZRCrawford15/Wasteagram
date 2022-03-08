@@ -85,8 +85,9 @@ class _NewEntryState extends State<NewEntry> {
     );
   }
 
+  // FIX DATE TIME FORMAT
   void uploadData(Post post) async {
-    String title = DateFormat('yyyy-MM-DD : kk:mm').format(DateTime.now());
+    String title = DateFormat('yyyy-MM-D : kk:mm').format(DateTime.now());
 
     FirebaseFirestore.instance
         .collection('posts')

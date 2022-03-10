@@ -21,13 +21,23 @@ class App extends StatelessWidget {
         title: 'Flutter Demo',
         routes: App.routes,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.blue),
+          textTheme: ThemeData.light().textTheme.copyWith(
+            headline6: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24
+            )
+          ), 
+          appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(
+              headline6: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold
+              )
+            )
+          )
+          
         ),
-        // home: Scaffold(
-        //   appBar: AppBar(
-        //     title: Text('Wasteagram: $total_items'),
-        //   )
-        // )
       );
   }
 }

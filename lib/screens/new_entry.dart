@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:location/location.dart';
 
 class NewEntry extends StatefulWidget {
-  const NewEntry({ Key? key }) : super(key: key);
+  const NewEntry({Key? key}) : super(key: key);
 
   static const routeName = 'NewEntry';
 
@@ -20,7 +20,6 @@ class NewEntry extends StatefulWidget {
 }
 
 class _NewEntryState extends State<NewEntry> {
-
   final formKey = GlobalKey<FormState>();
   final picker = ImagePicker();
   File? image;
@@ -28,8 +27,12 @@ class _NewEntryState extends State<NewEntry> {
   LocationData? locationData;
   var locationService = Location();
 
-  Post post = Post(dateTime: DateTime.now(), itemCount: 0, 
-    image: '', lattitude: '', longitude: '');
+  Post post = Post(
+      dateTime: DateTime.now(),
+      itemCount: 0,
+      image: '',
+      lattitude: '',
+      longitude: '');
 
   @override
   void initState() {
@@ -37,10 +40,10 @@ class _NewEntryState extends State<NewEntry> {
     retrieveLocation();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final Map? receivedValue = ModalRoute.of(context)?.settings.arguments as Map?;
+    final Map? receivedValue =
+        ModalRoute.of(context)?.settings.arguments as Map?;
     post.setImage = receivedValue!['image'];
     return Scaffold(
       appBar: AppBar(title: Text('Log a new post!')),
@@ -60,24 +63,28 @@ class _NewEntryState extends State<NewEntry> {
                         Container(
                           margin: EdgeInsets.all(15),
                           child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Number of items', 
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          onChanged: (value) {
-                            post.itemCount = int.parse(value);
-                       },
+                            decoration: InputDecoration(
+                              labelText: 'Number of items',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            // TODO: Fix crash where numbers were entered then deleted
+                            onChanged: (value) {
+                              post.itemCount = int.parse(value);
+                            },
 
-                      //  validator not quite working right
-                       validator: (value) {
-                           if (value == null || value.isEmpty) {
-                             return 'Please enter a value';
-                           }
-                       },
-                      ),
-                        )],
+                            //  validator not quite working right
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a value';
+                              }
+                            },
+                          ),
+                        )
+                      ],
                     )
                   ],
                 ),
@@ -86,14 +93,17 @@ class _NewEntryState extends State<NewEntry> {
                 width: MediaQuery.of(context).size.width * 0.5,
                 height: MediaQuery.of(context).size.height * .1,
                 child: ElevatedButton(
-                  onPressed: () async {
-                  post.lattitude = locationData!.latitude.toString();  
-                  post.longitude = locationData!.longitude.toString();
-                  post.image = await getImage(post.getImage);
-                  uploadData(post);
-                  Navigator.pop(context);
-                  
-                }, child: Text('Upload!', style: TextStyle(fontSize: 24),)),
+                    onPressed: () async {
+                      post.lattitude = locationData!.latitude.toString();
+                      post.longitude = locationData!.longitude.toString();
+                      post.image = await getImage(post.getImage);
+                      uploadData(post);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Upload!',
+                      style: TextStyle(fontSize: 24),
+                    )),
               )
             ],
           ),
@@ -105,17 +115,16 @@ class _NewEntryState extends State<NewEntry> {
   void uploadData(Post post) async {
     String title = DateFormat('MM-dd-yyyy @ hh:mm a').format(DateTime.now());
 
-    FirebaseFirestore.instance
-        .collection('posts')
-        .add({'date': title, 
-              'url': post.getImage, 
-              'item_count': post.getNumItems,
-              'lattitude': post.getLattidue,
-              'longitude': post.getLattidue
-              });   
+    FirebaseFirestore.instance.collection('posts').add({
+      'date': title,
+      'url': post.getImage,
+      'item_count': post.getNumItems,
+      'lattitude': post.getLattidue,
+      'longitude': post.getLattidue
+    });
   }
 
-void retrieveLocation() async {
+  void retrieveLocation() async {
     try {
       var _serviceEnabled = await locationService.serviceEnabled();
       if (!_serviceEnabled) {
@@ -143,20 +152,19 @@ void retrieveLocation() async {
     setState(() {});
   }
 
+  Future getImage(imageFile) async {
+    final pickedFile = imageFile;
+    image = File(pickedFile!);
 
-    Future getImage(imageFile) async {
-      final pickedFile = imageFile;
-      image = File(pickedFile!);
-
-      var fileName = DateTime.now().toString() + '.jpg';
-      Reference storageReference = FirebaseStorage.instance.ref().child(pickedFile);
-      UploadTask uploadTask = storageReference.putFile(image!);
-      await uploadTask;
-      final url = await storageReference.getDownloadURL();
-      return url;
+    var fileName = DateTime.now().toString() + '.jpg';
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child(pickedFile);
+    UploadTask uploadTask = storageReference.putFile(image!);
+    await uploadTask;
+    final url = await storageReference.getDownloadURL();
+    return url;
   }
-
-
 }
+
 
 

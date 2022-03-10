@@ -6,8 +6,7 @@ import './screens/new_entry.dart';
 
 
 class App extends StatelessWidget {
-
-  const App({ Key? key }) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   static final routes = {
     '/': (context) => HomeScreen(),
@@ -18,26 +17,18 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        routes: App.routes,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(secondary: Colors.blue),
+      title: 'Flutter Demo',
+      routes: App.routes,
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
+              .copyWith(secondary: Colors.blue),
           textTheme: ThemeData.light().textTheme.copyWith(
-            headline6: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24
-            )
-          ), 
+              headline6: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
           appBarTheme: AppBarTheme(
-            textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold
-              )
-            )
-          )
-          
-        ),
-      );
+              textTheme: ThemeData.light().textTheme.copyWith(
+                  headline6:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)))),
+    );
   }
 }
+

@@ -26,98 +26,92 @@ class _CameraScreenState extends State<HomeScreen> {
 * the URL of the image in Firebase Storage.
 */
 
-@override
-Widget build(BuildContext context) {
-  return StreamBuilder<QuerySnapshot>(
-    stream: FirebaseFirestore.instance.collection('posts').orderBy('date', descending: true).snapshots(),
-    builder: (context,  AsyncSnapshot<QuerySnapshot> snapshot) {
-      if (snapshot.hasData &&
-      snapshot.data!.docs != null &&
-      snapshot.data!.docs.isNotEmpty) {
-        return Scaffold(
-        appBar: AppBar(
-        title: Center(child: Text('Wasteagram - $totalCount'))),
-        body: Column(
-                children: [
-                  Expanded(
-                    child: CustomList(snapshot: snapshot)
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    height: 50,
-                    child: ElevatedButton(
-                      child: const Icon(Icons.camera),
-                      onPressed: () async {
-                        String url = await getImage();
-                        Navigator.pushNamed(
-                          context, 'NewEntry', 
-                          arguments: {'image': url});
-                        // navigate to new new entry and pass the picture taken
-                      },
-                    ),
-                  ),
-                ],
-              )
-            );
-      } else {  // empty list
-      return Scaffold(
-        appBar: AppBar(
-        title: Center(child: Text('Wasteagram - 0'))),
-        body: Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .orderBy('date', descending: true)
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData &&
+              snapshot.data!.docs != null &&
+              snapshot.data!.docs.isNotEmpty) {
+            return Scaffold(
+                appBar: AppBar(
+                    title: Center(child: Text('Wasteagram - $totalCount'))),
+                body: Column(
                   children: [
-                    const Center(child: CircularProgressIndicator()),
+                    Expanded(child: CustomList(snapshot: snapshot)),
                     Container(
-                    margin: const EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    height: 50,
+                      margin: const EdgeInsets.all(20),
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      height: 50,
                       child: ElevatedButton(
                         child: const Icon(Icons.camera),
                         onPressed: () async {
-                          Navigator.pushNamed(
-                            context, 'NewEntry', 
-                            arguments: {'image': await getImage()});
+                          String url = await getImage();
+                          Navigator.pushNamed(context, 'NewEntry',
+                              arguments: {'image': url});
                           // navigate to new new entry and pass the picture taken
                         },
                       ),
                     ),
                   ],
-                ),
-        )
-            );
-      }
-    }
-  );
-}
+                ));
+          } else {
+            // empty list
+            return Scaffold(
+                appBar: AppBar(title: Center(child: Text('Wasteagram - 0'))),
+                body: Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Center(child: CircularProgressIndicator()),
+                      Container(
+                        margin: const EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        height: 50,
+                        child: ElevatedButton(
+                          child: const Icon(Icons.camera),
+                          onPressed: () async {
+                            Navigator.pushNamed(context, 'NewEntry',
+                                arguments: {'image': await getImage()});
+                            // navigate to new new entry and pass the picture taken
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ));
+          }
+        });
+  }
 
-
-    Future getImage() async {
-      final pickedFile = await picker.pickImage(source: ImageSource.camera,
-      maxHeight: 550,
-      maxWidth: 300);
-      return pickedFile!.path;
+  Future getImage() async {
+    final pickedFile = await picker.pickImage(
+        source: ImageSource.camera, maxHeight: 550, maxWidth: 300);
+    return pickedFile!.path;
   }
 
   // trying to initalize item count for header
   getTotalItemCount() {
     StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasData &&
-                snapshot.data!.docs != null &&
-                snapshot.data!.docs.length > 0) {
-                  ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      var post = snapshot.data!.docs[index];
-                          totalCount += (post['item_count']);
-                          return Card();
-                    });
-                }
-                return Card();
-      });
+        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData &&
+              snapshot.data!.docs != null &&
+              snapshot.data!.docs.length > 0) {
+            ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  var post = snapshot.data!.docs[index];
+                  totalCount += (post['item_count']);
+                  return Card();
+                });
+          }
+          return Card();
+        });
   }
 }

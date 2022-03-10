@@ -44,7 +44,7 @@ class _NewEntryState extends State<NewEntry> {
     final Map? receivedValue = ModalRoute.of(context)?.settings.arguments as Map?;
     post.setImage = receivedValue!['image'];
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('Log a new post!')),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Center(
@@ -57,27 +57,45 @@ class _NewEntryState extends State<NewEntry> {
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Number of items', 
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) {
-                          post.itemCount = int.parse(value);
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(15),
+                          child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Number of items', 
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onChanged: (value) {
+                            post.itemCount = int.parse(value);
                        },
-                      )],
+
+                      //  validator not quite working right
+                       validator: (value) {
+                           if (value == null || value.isEmpty) {
+                             return 'Please enter a value';
+                           }
+                       },
+                      ),
+                        )],
                     )
                   ],
                 ),
               ),
-              ElevatedButton(onPressed: () async {
-                post.lattitude = locationData!.latitude.toString();  
-                post.longitude = locationData!.longitude.toString();
-                post.image = await getImage(post.getImage);
-                uploadData(post);
-                Navigator.pop(context);
-                
-              }, child: Text('Upload!'))
+              Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.height * .1,
+                child: ElevatedButton(
+                  onPressed: () async {
+                  post.lattitude = locationData!.latitude.toString();  
+                  post.longitude = locationData!.longitude.toString();
+                  post.image = await getImage(post.getImage);
+                  uploadData(post);
+                  Navigator.pop(context);
+                  
+                }, child: Text('Upload!', style: TextStyle(fontSize: 24),)),
+              )
             ],
           ),
         ),
@@ -87,7 +105,7 @@ class _NewEntryState extends State<NewEntry> {
 
   // FIX DATE TIME FORMAT
   void uploadData(Post post) async {
-    String title = DateFormat('yyyy-MM-D : kk:mm').format(DateTime.now());
+    String title = DateFormat('MM-dd-yyyy @ hh:mm a').format(DateTime.now());
 
     FirebaseFirestore.instance
         .collection('posts')

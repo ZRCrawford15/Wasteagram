@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, curly_braces_in_flow_control_structures
 
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/post.dart';
@@ -103,7 +102,6 @@ class _NewEntryState extends State<NewEntry> {
     );
   }
 
-  // FIX DATE TIME FORMAT
   void uploadData(Post post) async {
     String title = DateFormat('MM-dd-yyyy @ hh:mm a').format(DateTime.now());
 

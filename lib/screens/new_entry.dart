@@ -52,7 +52,11 @@ class _NewEntryState extends State<NewEntry> {
         child: Center(
           child: Column(
             children: [
-              Expanded(child: Image.file(File(post.getImage))),
+              Expanded(
+                child: Semantics(
+                  image: true,
+                  child: Image.file(File(post.getImage)))
+                ),
               Form(
                 key: formKey,
                 child: Column(
@@ -92,18 +96,22 @@ class _NewEntryState extends State<NewEntry> {
               Container(
                 width: MediaQuery.of(context).size.width * 0.5,
                 height: MediaQuery.of(context).size.height * .1,
-                child: ElevatedButton(
-                    onPressed: () async {
-                      post.lattitude = locationData!.latitude.toString();
-                      post.longitude = locationData!.longitude.toString();
-                      post.image = await getImage(post.getImage);
-                      uploadData(post);
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Upload!',
-                      style: TextStyle(fontSize: 24),
-                    )),
+                child: Semantics(
+                    button: true,
+                    onTapHint: 'Upload your post',
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        post.lattitude = locationData!.latitude.toString();
+                        post.longitude = locationData!.longitude.toString();
+                        post.image = await getImage(post.getImage);
+                        uploadData(post);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Upload!',
+                        style: TextStyle(fontSize: 24),
+                      )),
+                ),
               )
             ],
           ),

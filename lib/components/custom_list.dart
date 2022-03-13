@@ -1,4 +1,3 @@
-// TODO fix this so it is a reusable widget
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -17,18 +16,22 @@ class CustomList extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           color: Colors.blue[200],
-          child: ListTile(
-            title: Text(post['date'], style: const TextStyle(fontSize: 24)),
-            trailing: Text(post['item_count'].toString(), style: const TextStyle(fontSize: 24)),
-            onTap: () async {
-              Navigator.pushNamed(context, 'details', arguments: {
-                'image': post['url'],
-                'title': post['date'],
-                'item_count': post['item_count'],
-                'lattitude': post['lattitude'],
-                'longitude': post['longitude']
-              });
-            },
+          child: Semantics(
+            button: true,
+            onTapHint: 'Click the post to get more information',
+            child: ListTile(
+              title: Text(post['date'], style: const TextStyle(fontSize: 24)),
+              trailing: Text(post['item_count'].toString(), style: const TextStyle(fontSize: 24)),
+              onTap: () async {
+                Navigator.pushNamed(context, 'details', arguments: {
+                  'image': post['url'],
+                  'title': post['date'],
+                  'item_count': post['item_count'],
+                  'lattitude': post['lattitude'],
+                  'longitude': post['longitude']
+                });
+              },
+            ),
           ),
         );
       },

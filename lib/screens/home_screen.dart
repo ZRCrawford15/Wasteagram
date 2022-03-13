@@ -47,14 +47,18 @@ class _CameraScreenState extends State<HomeScreen> {
                       margin: const EdgeInsets.all(20),
                       width: MediaQuery.of(context).size.width * 0.25,
                       height: 50,
-                      child: ElevatedButton(
-                        child: const Icon(Icons.camera),
-                        onPressed: () async {
-                          String url = await getImage();
-                          Navigator.pushNamed(context, 'NewEntry',
-                              arguments: {'image': url});
-                          // navigate to new new entry and pass the picture taken
-                        },
+                      child: Semantics(
+                        button: true,
+                        onTapHint: 'Take an image for a new post',
+                        child: ElevatedButton(
+                          child: const Icon(Icons.camera),
+                          onPressed: () async {
+                            String url = await getImage();
+                            Navigator.pushNamed(context, 'NewEntry',
+                                arguments: {'image': url});
+                            // navigate to new new entry and pass the picture taken
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -73,13 +77,17 @@ class _CameraScreenState extends State<HomeScreen> {
                         margin: const EdgeInsets.all(20),
                         width: MediaQuery.of(context).size.width * 0.25,
                         height: 50,
-                        child: ElevatedButton(
-                          child: const Icon(Icons.camera),
-                          onPressed: () async {
-                            Navigator.pushNamed(context, 'NewEntry',
-                                arguments: {'image': await getImage()});
-                            // navigate to new new entry and pass the picture taken
-                          },
+                        child: Semantics(
+                        button: true,
+                        onTapHint: 'Take an image for a new post',
+                          child: ElevatedButton(
+                            child: const Icon(Icons.camera),
+                            onPressed: () async {
+                              Navigator.pushNamed(context, 'NewEntry',
+                                  arguments: {'image': await getImage()});
+                              // navigate to new new entry and pass the picture taken
+                            },
+                          ),
                         ),
                       ),
                     ],

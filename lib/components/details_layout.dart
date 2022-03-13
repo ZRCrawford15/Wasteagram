@@ -36,7 +36,7 @@ class DetailsLayout extends StatelessWidget {
                   child: Image.network(receivedValue['image'])),
             ),
             Semantics(
-              value: receivedValue['item_count'],
+              value: receivedValue['item_count'].toString(),
               child: Container(
                 padding: EdgeInsets.all(15),
                 margin: EdgeInsets.all(15),

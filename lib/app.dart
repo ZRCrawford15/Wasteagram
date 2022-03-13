@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import './screens/details.dart';
@@ -25,9 +27,11 @@ class App extends StatelessWidget {
           textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
           appBarTheme: AppBarTheme(
-              textTheme: ThemeData.light().textTheme.copyWith(
+              toolbarTextStyle: ThemeData.light().textTheme.copyWith(
                   headline6:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)))),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)).bodyText2, titleTextStyle: ThemeData.light().textTheme.copyWith(
+                  headline6:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)).headline6)),
     );
   }
 }

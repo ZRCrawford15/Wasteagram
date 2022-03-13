@@ -39,7 +39,7 @@ class _CameraScreenState extends State<HomeScreen> {
               snapshot.data!.docs.isNotEmpty) {
             return Scaffold(
                 appBar: AppBar(
-                    title: Center(child: Text('Wasteagram - $totalCount'))),
+                    title: Center(child: Text('Wasteagram'))),
                 body: Column(
                   children: [
                     Expanded(child: CustomList(snapshot: snapshot)),
@@ -62,7 +62,7 @@ class _CameraScreenState extends State<HomeScreen> {
           } else {
             // empty list
             return Scaffold(
-                appBar: AppBar(title: Center(child: Text('Wasteagram - 0'))),
+                appBar: AppBar(title: Center(child: Text('Wasteagram'))),
                 body: Align(
                   alignment: Alignment.center,
                   child: Column(

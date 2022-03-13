@@ -18,8 +18,8 @@ class CustomList extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           color: Colors.blue[200],
           child: ListTile(
-            title: Text(post['date']),
-            trailing: Text(post['item_count'].toString()),
+            title: Text(post['date'], style: const TextStyle(fontSize: 24)),
+            trailing: Text(post['item_count'].toString(), style: const TextStyle(fontSize: 24)),
             onTap: () async {
               Navigator.pushNamed(context, 'details', arguments: {
                 'image': post['url'],
